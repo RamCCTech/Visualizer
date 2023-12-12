@@ -17,7 +17,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F8B3E333-4B89-4159-BBB2-C72277AE8D39}</ProjectGuid>
+    <ProjectGuid>{8A83C181-93B3-49D9-8054-F0085BC64B5A}</ProjectGuid>
     <Keyword>QtVS_v304</Keyword>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">10.0.22621.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">10.0.22621.0</WindowsTargetPlatformVersion>
@@ -38,12 +38,12 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>6.6.1_msvc2019_64</QtInstall>
-    <QtModules>core;gui;widgets;opengl;openglwidgets</QtModules>
+    <QtModules>core;gui;opengl;openglwidgets;widgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>6.6.1_msvc2019_64</QtInstall>
-    <QtModules>core;gui;widgets;opengl;openglwidgets</QtModules>
+    <QtModules>core;gui;opengl;openglwidgets;widgets</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
@@ -99,21 +99,31 @@
     </QtMoc>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="SutherlandCohen.h" />
+    <ClInclude Include="SutherlandHodgman.h" />
     <QtRcc Include="Visualizer.qrc" />
     <QtMoc Include="Visualizer.h" />
-    <ClCompile Include="openglwindow.cpp" />
+    <ClCompile Include="Line.cpp" />
+    <ClCompile Include="OpenGLWindow.cpp" />
+    <ClCompile Include="Point.cpp" />
+    <ClCompile Include="Shape.cpp" />
+    <ClCompile Include="SutherlandCohen.cpp" />
+    <ClCompile Include="SutherlandHodgman.cpp" />
     <ClCompile Include="Visualizer.cpp" />
-    <ClCompile Include="main.cpp" />
-    <QtMoc Include="openglwindow.h" />
-    <ClInclude Include="stdafx.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClInclude>
+    <ClCompile Include="main.cpp">
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">input</DynamicSource>
+      <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).moc</QtMocFileName>
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Release|x64'">input</DynamicSource>
+      <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).moc</QtMocFileName>
+    </ClCompile>
+    <QtMoc Include="OpenGLWindow.h" />
+    <ClInclude Include="Line.h" />
+    <ClInclude Include="Point.h" />
+    <ClInclude Include="Shape.h" />
+    <ClInclude Include="stdafx.h" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">Create</PrecompiledHeader>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

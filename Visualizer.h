@@ -1,20 +1,26 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
+#include "Visualizer.h"
+
+class OpenGLWindow;
+
 class Visualizer : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    Visualizer(QWidget *parent = nullptr);
+    Visualizer(QWindow* parent = nullptr);
     ~Visualizer();
 
-
-public slots:
-    void changeText();
-    void changeColor();
+private:
+    void setupUi();
 
 private:
-    Ui::VisualizerClass ui;
-    QVector<QPointF> polygonVertices;
+    QMenuBar* mMenuBar;
+    QToolBar* mMainToolBar;
+    QWidget* mCentralWidget;
+    QStatusBar* mStatusBar;
+    OpenGLWindow* mRenderer;
+
 };
