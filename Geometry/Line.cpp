@@ -1,7 +1,7 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "Line.h"
 
-Line::Line(Point p1, Point p2)
+Line::Line(Point3D p1, Point3D p2)
     : mP1(p1),
     mP2(p2)
 {
@@ -17,12 +17,12 @@ Line::~Line()
 {
 }
 
-Point& Line::p1()
+Point3D& Line::p1()
 {
     return mP1;
 }
 
-Point& Line::p2()
+Point3D& Line::p2()
 {
     return mP2;
 }

@@ -10,7 +10,7 @@ public:
     Line getClippedLine();
 
 private:
-    int computeCode(Point p);
+    int computeCode(Point3D p);
     void setRegion();
     enum RegionCode {
         INSIDE = 0, // 0000

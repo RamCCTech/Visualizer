@@ -14,9 +14,20 @@ class QOpenGLPaintDevice;
 class OpenGLWindow :public QOpenGLWidget, protected QOpenGLFunctions
 {
     Q_OBJECT
+
+signals:
+    void shapesUpdated();
+
 public:
-    OpenGLWindow(const QColor& background, QMainWindow* parent);
+    OpenGLWindow(const QColor& background, QWidget* parent);
     ~OpenGLWindow();
+
+    void addLines(std::vector<Line> lines);
+    void addPolygons(Shape* s);
+    void addClippingPolygon(Shape* s);
+    void clipPolygons();
+    void clipLines();
+
 
 protected:
     void paintGL() override;
@@ -27,7 +38,6 @@ private:
 
     void setRegion(double xMin, double yMin, double xMax, double yMax);
     void drawRegion(QVector<GLfloat>& vertices, QVector<GLfloat>& colors);
-
     void drawPolygon(Shape s, QVector<GLfloat>& vertices, QVector<GLfloat>& colors);
 
 private:
@@ -56,4 +66,8 @@ private:
     double y_max = 6;
     double x_min = -6;
     double y_min = -6;
+
+    Shape mClippingPolygon;
+    std::vector<Shape> mPolygons;
+    std::vector<Line> mLines;
 };

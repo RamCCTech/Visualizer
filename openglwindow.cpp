@@ -5,15 +5,14 @@
 #include <QOpenGLPaintDevice>
 #include <QOpenGLShaderProgram>
 #include <QPainter>
-#include <iostream>
 
 #include "SutherlandCohen.h"
 #include "SutherlandHodgman.h"
 
 
 
-OpenGLWindow::OpenGLWindow(const QColor& background, QMainWindow* parent) :
-    mBackground(background)
+OpenGLWindow::OpenGLWindow(const QColor& background, QWidget* parent) :
+    mBackground(background),mClippingPolygon({})
 {
     setParent(parent);
     setMinimumSize(300, 250);
@@ -56,55 +55,31 @@ void OpenGLWindow::paintGL()
 
     QVector<GLfloat> colors;
 
-    setRegion(-6, -6, 6, 6);
-    drawRegion(vertices, colors);
+    std::vector<Line> clipingPolygonLines = mClippingPolygon.getShape();
+    for (int j = 0;j < clipingPolygonLines.size();j++) {
+        vertices << clipingPolygonLines.at(j).p1().x() << clipingPolygonLines.at(j).p1().y();
+        vertices << clipingPolygonLines.at(j).p2().x() << clipingPolygonLines.at(j).p2().y();
+        colors << 1.0f << 1.0f << 0.0f;
+        colors << 1.0f << 1.0f << 0.0f;
+    }
 
-    Point p1(-6.0f, -6.0f);
-    Point p2(-6.0f, 6.0f);
-    Point p3(6.0f, 6.0f);
-    Point p4(6.0f, -6.0f);
+    for (int i = 0;i < mPolygons.size();i++) {
+        std::vector<Line> lines = mPolygons.at(i).getShape();
+        for (int j = 0;j < lines.size();j++) {
+            vertices << lines.at(j).p1().x() << lines.at(j).p1().y();
+            vertices << lines.at(j).p2().x() << lines.at(j).p2().y();
+            colors << 1.0f << 1.0f << 1.0f;
+            colors << 1.0f << 1.0f << 1.0f;
+        }
+    }
 
-    Line l1(p1, p2);
-    Line l2(p2, p3);
-    Line l3(p3, p4);
-    Line l4(p4, p1);
-
-    std::vector<Line> vl = { l1,l2,l3,l4 };
-
-    Shape region(vl);
-
-    Point p5(0.0f, 0.0f);
-    Point p6(7.0f, 0.0f);
-    Point p7(7.0f, -8.0f);
-    Point p8(-5.0f, -8.0f);
-
-    Line l5(p5, p6);
-    Line l6(p6, p7);
-    Line l7(p7, p8);
-    Line l8(p8, p5);
-
-    std::vector<Line> vp = { l5,l6,l7, l8};
-    Shape polygon(vp);
-
-    SutherlandHodgman sh(region, polygon);
-    Shape clippedShape = sh.getClippedPolygon();
-
-    drawPolygon(clippedShape, vertices, colors);
-
-    /*Point p5(2, 5);
-    Point p6(9, 3);
-    Line l5(p5, p6);
-    SutherlandCohen sc(region, l5);
-
-    Line l6 = sc.getClippedLine();
-
-    vertices << l6.p1().x() << l6.p1().y();
-    vertices << l6.p2().x() << l6.p2().y();
-
-    colors << 1.0f << 1.0f << 1.0f;
-    colors << 1.0f << 1.0f << 1.0f;*/
-
-
+    for (int j = 0;j < mLines.size();j++) {
+        vertices << mLines.at(j).p1().x() << mLines.at(j).p1().y();
+        vertices << mLines.at(j).p2().x() << mLines.at(j).p2().y();
+        colors << 0.0f << 1.0f << 1.0f;
+        colors << 0.0f << 1.0f << 1.0f;
+    }
+    
     glVertexAttribPointer(m_posAttr, 2, GL_FLOAT, GL_FALSE, 0, vertices.data());
     glVertexAttribPointer(m_colAttr, 3, GL_FLOAT, GL_FALSE, 0, colors.data());
 
@@ -115,6 +90,42 @@ void OpenGLWindow::paintGL()
 
     glDisableVertexAttribArray(m_colAttr);
     glDisableVertexAttribArray(m_posAttr);
+}
+
+void OpenGLWindow::clipPolygons()
+{
+    for (int i = 0;i < mPolygons.size();i++) {
+        SutherlandHodgman sh(mClippingPolygon, mPolygons.at(i));
+        mPolygons.at(i) = sh.getClippedPolygon();
+    }
+    emit shapesUpdated();
+}
+
+void OpenGLWindow::clipLines()
+{
+    for (int i = 0;i < mLines.size();i++) {
+        SutherlandCohen sc(mClippingPolygon, mLines[i]);
+
+        mLines[i] = sc.getClippedLine();
+    }
+    emit shapesUpdated();
+}
+
+void OpenGLWindow::addClippingPolygon(Shape* s)
+{
+    mClippingPolygon=*s;
+    emit shapesUpdated();
+}
+void OpenGLWindow::addPolygons(Shape* s)
+{
+    mPolygons.push_back(*s);
+    emit shapesUpdated();
+}
+void OpenGLWindow::addLines(std::vector<Line> lines)
+{
+    for(Line l:lines)
+    mLines.push_back(l);
+    emit shapesUpdated();
 }
 
 void OpenGLWindow::drawPolygon(Shape s, QVector<GLfloat>& vertices, QVector<GLfloat>& colors)

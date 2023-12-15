@@ -25,7 +25,7 @@ Shape SutherlandHodgman::getClippedPolygon()
 
 void SutherlandHodgman::clipAlongLine(Line l)
 {
-    std::vector<Point> newPoints;
+    std::vector<Point3D> newPoints;
     int newPolySize = 0;
 
     for (int i = 0; i < mPolygon.getSize(); i++)
@@ -45,7 +45,7 @@ void SutherlandHodgman::clipAlongLine(Line l)
         {
             double x = xIntersect(l, li);
             double y = yIntersect(l, li);
-            Point p(x, y);
+            Point3D p(x, y);
             newPoints.push_back(p);
             newPolySize++;
             newPoints.push_back(li.p2());
@@ -55,7 +55,7 @@ void SutherlandHodgman::clipAlongLine(Line l)
         {
             double x = xIntersect(l, li);
             double y = yIntersect(l, li);
-            Point p(x, y);
+            Point3D p(x, y);
             newPoints.push_back(p);
             newPolySize++;
         }

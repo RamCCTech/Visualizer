@@ -119,7 +119,7 @@ void SutherlandCohen::setRegion()
     }
 }
 
-int SutherlandCohen::computeCode(Point p)
+int SutherlandCohen::computeCode(Point3D p)
 {
     // initialized as being inside
     int code = INSIDE;

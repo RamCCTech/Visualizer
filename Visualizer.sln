@@ -5,16 +5,32 @@ VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Visualizer", "Visualizer.vcxproj", "{8A83C181-93B3-49D9-8054-F0085BC64B5A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Geometry", "Geometry\Geometry.vcxproj", "{73D4B244-17D4-4122-9379-DF578E5909C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{8A83C181-93B3-49D9-8054-F0085BC64B5A}.Debug|x64.ActiveCfg = Debug|x64
 		{8A83C181-93B3-49D9-8054-F0085BC64B5A}.Debug|x64.Build.0 = Debug|x64
+		{8A83C181-93B3-49D9-8054-F0085BC64B5A}.Debug|x86.ActiveCfg = Debug|x64
+		{8A83C181-93B3-49D9-8054-F0085BC64B5A}.Debug|x86.Build.0 = Debug|x64
 		{8A83C181-93B3-49D9-8054-F0085BC64B5A}.Release|x64.ActiveCfg = Release|x64
 		{8A83C181-93B3-49D9-8054-F0085BC64B5A}.Release|x64.Build.0 = Release|x64
+		{8A83C181-93B3-49D9-8054-F0085BC64B5A}.Release|x86.ActiveCfg = Release|x64
+		{8A83C181-93B3-49D9-8054-F0085BC64B5A}.Release|x86.Build.0 = Release|x64
+		{73D4B244-17D4-4122-9379-DF578E5909C5}.Debug|x64.ActiveCfg = Debug|x64
+		{73D4B244-17D4-4122-9379-DF578E5909C5}.Debug|x64.Build.0 = Debug|x64
+		{73D4B244-17D4-4122-9379-DF578E5909C5}.Debug|x86.ActiveCfg = Debug|Win32
+		{73D4B244-17D4-4122-9379-DF578E5909C5}.Debug|x86.Build.0 = Debug|Win32
+		{73D4B244-17D4-4122-9379-DF578E5909C5}.Release|x64.ActiveCfg = Release|x64
+		{73D4B244-17D4-4122-9379-DF578E5909C5}.Release|x64.Build.0 = Release|x64
+		{73D4B244-17D4-4122-9379-DF578E5909C5}.Release|x86.ActiveCfg = Release|Win32
+		{73D4B244-17D4-4122-9379-DF578E5909C5}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
