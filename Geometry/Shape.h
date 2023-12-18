@@ -6,11 +6,9 @@ class GEOMETRY_API Shape
 {
 public:
     Shape(const std::vector<Line>& polyLines);
-    //Shape(const std::vector<Point3D>& polyLines);
     ~Shape();
 
     std::vector<Line>& getShape();
-    //std::vector<Point3D>& getShapePoints();
 
     size_t getSize() const;
     void setShape(std::vector<Line> vl);

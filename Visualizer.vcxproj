@@ -66,11 +66,11 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>D:\RamWorkspace\Visualizer\Geometry;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\RamWorkspace\Visualizer\Algorithms;D:\RamWorkspace\Visualizer\Geometry;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>D:\RamWorkspace\Visualizer\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Geometry.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Geometry.lib;Algorithms.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -108,13 +108,9 @@
     </QtMoc>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="SutherlandCohen.h" />
-    <ClInclude Include="SutherlandHodgman.h" />
     <QtRcc Include="Visualizer.qrc" />
     <QtMoc Include="Visualizer.h" />
     <ClCompile Include="OpenGLWindow.cpp" />
-    <ClCompile Include="SutherlandCohen.cpp" />
-    <ClCompile Include="SutherlandHodgman.cpp" />
     <ClCompile Include="Visualizer.cpp" />
     <ClCompile Include="main.cpp">
       <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">input</DynamicSource>

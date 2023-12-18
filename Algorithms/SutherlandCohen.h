@@ -1,11 +1,12 @@
 #pragma once
 
 #include "shape.h"
+#include "pch.h"
 
-class SutherlandCohen
+class ALGORITHMS_API SutherlandCohen
 {
 public:
-    SutherlandCohen(Shape region,Line l);
+    SutherlandCohen(Shape region, Line l);
     ~SutherlandCohen();
     Line getClippedLine();
 

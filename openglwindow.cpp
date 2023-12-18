@@ -8,6 +8,8 @@
 
 #include "SutherlandCohen.h"
 #include "SutherlandHodgman.h"
+#include "HermiteCurve.h"
+#include "BezierCurve.h"
 
 
 
@@ -24,7 +26,6 @@ OpenGLWindow::~OpenGLWindow()
 
 void OpenGLWindow::reset()
 {
-    // And now release all OpenGL resources.
     makeCurrent();
     delete mProgram;
     mProgram = nullptr;
@@ -128,38 +129,42 @@ void OpenGLWindow::addLines(std::vector<Line> lines)
     emit shapesUpdated();
 }
 
-void OpenGLWindow::drawPolygon(Shape s, QVector<GLfloat>& vertices, QVector<GLfloat>& colors)
+void OpenGLWindow::addHermiteCurve(std::vector<Point3D> points)
 {
-    for (int i = 0; i < s.getSize(); i++)
-    {
-        Line l = s.getShape().at(i);
-        vertices << l.p1().x() << l.p1().y();
-        vertices << l.p2().x() << l.p2().y();
+    HermiteCurve bs(points);
+    std::vector<Point3D> hermitePoints = bs.calculateHermite();
 
-        colors << 1.0f << 0.0f << 0.0f;//red
-        colors << 1.0f << 0.0f << 0.0f;
+    // Ensure that there are at least two points in the B-spline curve
+    if (hermitePoints.size() < 2) {
+        // Handle the case where there are not enough points
+        return;
     }
+
+    // Create lines from the B-spline curve points
+    for (int i = 0; i < hermitePoints.size() - 1; i++) {
+        mLines.push_back(Line(hermitePoints[i], hermitePoints[i + 1]));
+    }
+
+    emit shapesUpdated();
 }
 
-void OpenGLWindow::setRegion(double xMin, double yMin, double xMax, double yMax)
+void OpenGLWindow::addBezierCurve(std::vector<Point3D> points)
 {
-    x_min = xMin;
-    x_max = xMax;
-    y_min = yMin;
-    y_max = yMax;
-}
-void OpenGLWindow::drawRegion(QVector<GLfloat>& vertices, QVector<GLfloat>& colors)
-{
-    vertices << x_min << y_min;
-    vertices << x_max << y_min;
-    vertices << x_max << y_max;
-    vertices << x_max << y_min;
-    vertices << x_max << y_max;
-    vertices << x_min << y_max;
-    vertices << x_min << y_min;
-    vertices << x_min << y_max;
+    BezierCurve bs(points);
+    std::vector<Point3D> bezierPoints = bs.calculateBezier();
 
-    for (int i = 0;i < 8;i++)colors << 0.0f << 1.0f << 1.0f;
+    // Ensure that there are at leabezierpoints in the B-spline curve
+    if (bezierPoints.size() < 2) {
+        // Handle the case where there are not enough points
+        return;
+    }
+
+    // Create lines from the B-spline curve points
+    for (int i = 0; i < bezierPoints.size() - 1; i++) {
+        mLines.push_back(Line(bezierPoints[i], bezierPoints[i + 1]));
+    }
+
+    emit shapesUpdated();
 }
 
 

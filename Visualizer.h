@@ -24,6 +24,8 @@ private slots:
     void addPoints();
     void addRegion();
     void addLine();
+    void addHermite();
+    void addBezier();
     void addPolygon();
     void clipPolygon();
     void clipLine();
@@ -34,11 +36,14 @@ private:
     QGridLayout* mGridLayout;
     QHBoxLayout* mHorizontalLayout7;
     QHBoxLayout* mHorizontalLayout8;
+    QHBoxLayout* mHorizontalLayout9;
     QPushButton* mPushButton4;
     QPushButton* mPushButton3;
     QPushButton* mPushButton5;
     QPushButton* mPushButton6;
     QPushButton* mPushButton7;
+    QPushButton* mPushButton8;
+    QPushButton* mPushButton9;
     QHBoxLayout* mHorizontalLayout10;
     QVBoxLayout* mVerticalLayout3;
     QVBoxLayout* mVerticalLayout5;

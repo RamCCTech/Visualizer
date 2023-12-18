@@ -7,9 +7,14 @@ Visualizer::Visualizer(QWindow* parent) : QMainWindow(nullptr)
 {
     setupUi();
     connect(mOpenGLWidget, SIGNAL(shapesUpdated()), mOpenGLWidget, SLOT(update()));
-    Geometry geometry;
-
-    geometry.print();
+    connect(mPushButton2, &QPushButton::clicked, this, &Visualizer::addPoints);
+    connect(mPushButton4, &QPushButton::clicked, this, &Visualizer::addRegion);
+    connect(mPushButton3, &QPushButton::clicked, this, &Visualizer::addPolygon);
+    connect(mPushButton5, &QPushButton::clicked, this, &Visualizer::addLine);
+    connect(mPushButton6, &QPushButton::clicked, this, &Visualizer::clipLine);
+    connect(mPushButton7, &QPushButton::clicked, this, &Visualizer::clipPolygon);
+    connect(mPushButton8, &QPushButton::clicked, this, &Visualizer::addBezier);
+    connect(mPushButton9, &QPushButton::clicked, this, &Visualizer::addHermite);
 }
 
 Visualizer::~Visualizer()
@@ -64,7 +69,7 @@ void Visualizer::setupUi()
     mVerticalLayout5->setSpacing(6);
     mHorizontalLayout5 = new QHBoxLayout();
     mHorizontalLayout5->setSpacing(6);
-    QLabel* label_4 = new QLabel("POLYGON POINTS", mGridLayoutWidget);
+    QLabel* label_4 = new QLabel("Point3D Input ->", mGridLayoutWidget);
 
     mHorizontalLayout5->addWidget(label_4);
 
@@ -122,16 +127,17 @@ void Visualizer::setupUi()
     mHorizontalLayout8->addWidget(mPushButton7);
     mGridLayout->addLayout(mHorizontalLayout8, 4, 0, 1, 1);
 
+    mHorizontalLayout9 = new QHBoxLayout();
+    mPushButton8 = new QPushButton("Bezier Curve", mGridLayoutWidget);
+    mHorizontalLayout9->addWidget(mPushButton8);
+    mPushButton9 = new QPushButton("Hermite Curve", mGridLayoutWidget);
+    mHorizontalLayout9->addWidget(mPushButton9);
+    mGridLayout->addLayout(mHorizontalLayout9, 5, 0, 1, 1);
+
     QLabel* label = new QLabel("Clipper", mGridLayoutWidget);
     label->setAlignment(Qt::AlignLeading | Qt::AlignHCenter | Qt::AlignVCenter);
-
     mGridLayout->addWidget(label, 0, 0, 1, 1);
-    connect(mPushButton2, &QPushButton::clicked, this, &Visualizer::addPoints);
-    connect(mPushButton4, &QPushButton::clicked, this, &Visualizer::addRegion);
-    connect(mPushButton3, &QPushButton::clicked, this, &Visualizer::addPolygon);
-    connect(mPushButton5, &QPushButton::clicked, this, &Visualizer::addLine);
-    connect(mPushButton7, &QPushButton::clicked, this, &Visualizer::clipPolygon);
-    connect(mPushButton6, &QPushButton::clicked, this, &Visualizer::clipLine);
+
     setCentralWidget(mCentralWidget);
 }
 
@@ -204,6 +210,32 @@ void Visualizer::addPolygon()
 
     Shape* polygon = new Shape(lines);
     mOpenGLWidget->addPolygons(polygon);
+
+    mListWidget3->clear();
+    mPoints.clear();
+}
+
+void Visualizer::addHermite()
+{
+    if (mPoints.size() != 4) {
+        // At least three points are needed to create a polygon
+        QMessageBox::warning(this, "Error", "Four points are needed to create a Hermite.");
+        return;
+    }
+    mOpenGLWidget->addHermiteCurve(mPoints);
+
+    mListWidget3->clear();
+    mPoints.clear();
+}
+
+void Visualizer::addBezier()
+{
+    if (mPoints.size() != 4) {
+        // At least three points are needed to create a polygon
+        QMessageBox::warning(this, "Error", "Four points are needed to create a Bezier.");
+        return;
+    }
+    mOpenGLWidget->addBezierCurve(mPoints);
 
     mListWidget3->clear();
     mPoints.clear();

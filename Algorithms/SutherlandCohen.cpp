@@ -1,15 +1,17 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "SutherlandCohen.h"
 
 #include <iostream>
 #include <algorithm>
+#include <limits>
+#include <cfloat>
 
 SutherlandCohen::SutherlandCohen(Shape region, Line l)
     : mRegion(region),
     mInputLine(l),
-    mXMin(std::numeric_limits<double>::max()),  // Initialize to the maximum possible value
+    mXMin(DBL_MAX),  // Initialize to the maximum possible value
     mXMax(std::numeric_limits<double>::lowest()),  // Initialize to the lowest possible value
-    mYMin(std::numeric_limits<double>::max()),
+    mYMin(DBL_MAX),
     mYMax(std::numeric_limits<double>::lowest())
 {
     setRegion();
@@ -95,7 +97,7 @@ Line SutherlandCohen::getClippedLine()
             << mInputLine.p1().y() << " to " << mInputLine.p2().x() << ", " << mInputLine.p2().y() << std::endl;
 
         Line l(mInputLine.p1(), mInputLine.p2());
-        
+
         return l;
     }
     else {
@@ -104,18 +106,18 @@ Line SutherlandCohen::getClippedLine()
 }
 
 void SutherlandCohen::setRegion()
-    
+
 {
     std::vector<Line> shape = mRegion.getShape();
     for (Line l : shape) {
-        mXMin = std::min(l.p1().x(), mXMin);
-        mXMin = std::min(l.p2().x(), mXMin);
-        mYMin = std::min(l.p1().y(), mYMin);
-        mYMin = std::min(l.p2().y(), mYMin);
-        mXMax = std::max(l.p1().x(), mXMax);
-        mXMax = std::max(l.p2().x(), mXMax);
-        mYMax = std::max(l.p1().y(), mYMax);
-        mYMax = std::max(l.p2().y(), mYMax);
+        mXMin = min(l.p1().x(), mXMin);
+        mXMin = min(l.p2().x(), mXMin);
+        mYMin = min(l.p1().y(), mYMin);
+        mYMin = min(l.p2().y(), mYMin);
+        mXMax = max(l.p1().x(), mXMax);
+        mXMax = max(l.p2().x(), mXMax);
+        mYMax = max(l.p1().y(), mYMax);
+        mYMax = max(l.p2().y(), mYMax);
     }
 }
 

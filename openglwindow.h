@@ -4,6 +4,7 @@
 #include <QOpenGLBuffer>
 
 #include "Shape.h"
+#include "point.h"
 
 class QOpenGLTexture;
 class QOpenGLShader;
@@ -25,6 +26,8 @@ public:
     void addLines(std::vector<Line> lines);
     void addPolygons(Shape* s);
     void addClippingPolygon(Shape* s);
+    void addHermiteCurve(std::vector<Point3D> points);
+    void addBezierCurve(std::vector<Point3D> points);
     void clipPolygons();
     void clipLines();
 
@@ -35,10 +38,6 @@ protected:
 
 private:
     void reset();
-
-    void setRegion(double xMin, double yMin, double xMax, double yMax);
-    void drawRegion(QVector<GLfloat>& vertices, QVector<GLfloat>& colors);
-    void drawPolygon(Shape s, QVector<GLfloat>& vertices, QVector<GLfloat>& colors);
 
 private:
     bool mAnimating = false;
@@ -61,11 +60,6 @@ private:
     GLint m_posAttr = 0;
     GLint m_colAttr = 0;
     GLint m_matrixUniform = 0;
-
-    double x_max = 6;
-    double y_max = 6;
-    double x_min = -6;
-    double y_min = -6;
 
     Shape mClippingPolygon;
     std::vector<Shape> mPolygons;

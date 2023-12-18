@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "SutherlandHodgman.h"
 
 SutherlandHodgman::SutherlandHodgman(Shape region, Shape polygon)
@@ -14,7 +14,7 @@ SutherlandHodgman::~SutherlandHodgman()
 Shape SutherlandHodgman::getClippedPolygon()
 {
     int size = mRegion.getSize();
-    for (int i = 0; i <size ; i++)
+    for (int i = 0; i < size; i++)
     {
         std::vector<Line> shape = mRegion.getShape();
         clipAlongLine(shape.at(i));

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "shape.h"
+#include "pch.h"
 
-
-class SutherlandHodgman
+class ALGORITHMS_API SutherlandHodgman
 {
 public:
 	SutherlandHodgman(Shape region, Shape polygon);
