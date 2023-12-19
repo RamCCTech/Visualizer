@@ -4,7 +4,7 @@
 
 #include "pch.h"
 
-class ALGORITHMS_API HermiteCurve
+class HERMITECURVE_API HermiteCurve
 {
 public:
 	HermiteCurve(std::vector<Point3D> points);

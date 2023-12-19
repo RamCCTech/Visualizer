@@ -1,12 +1,16 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
-#include "Visualizer.h"
-#include "Point3D.h"
+#include <QGridLayout>
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QDoubleSpinBox>
+#include <QListWidget>
 #include <vector>
 #include <QOpenGLFunctions>
 #include <QOpenGLWidget>
 
+#include "Shape.h"
 
 class OpenGLWindow;
 
@@ -20,6 +24,11 @@ public:
 
 private:
     void setupUi();
+    void connectSignalsSlots();
+    Shape* createShapeFromPoints();
+    std::vector<Line> createLinesFromPoints();
+    void clearListAndPoints();
+
 private slots:
     void addPoints();
     void addRegion();
@@ -37,6 +46,12 @@ private:
     QHBoxLayout* mHorizontalLayout7;
     QHBoxLayout* mHorizontalLayout8;
     QHBoxLayout* mHorizontalLayout9;
+    QHBoxLayout* mHorizontalLayout10;
+    QVBoxLayout* mVerticalLayout3;
+    QVBoxLayout* mVerticalLayout5;
+    QHBoxLayout* mHorizontalLayout5;
+
+    // Buttons
     QPushButton* mPushButton4;
     QPushButton* mPushButton3;
     QPushButton* mPushButton5;
@@ -44,15 +59,17 @@ private:
     QPushButton* mPushButton7;
     QPushButton* mPushButton8;
     QPushButton* mPushButton9;
-    QHBoxLayout* mHorizontalLayout10;
-    QVBoxLayout* mVerticalLayout3;
-    QVBoxLayout* mVerticalLayout5;
-    QHBoxLayout* mHorizontalLayout5;
+
+    // DoubleSpinBoxes
     QDoubleSpinBox* mDoubleSpinBox5;
     QDoubleSpinBox* mDoubleSpinBox6;
+
+    // Other widgets
     QPushButton* mPushButton2;
     QListWidget* mListWidget3;
     OpenGLWindow* mOpenGLWidget;
 
+    // Data
     std::vector<Point3D> mPoints;
 };
+

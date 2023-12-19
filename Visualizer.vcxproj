@@ -66,11 +66,11 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>D:\RamWorkspace\Visualizer\Algorithms;D:\RamWorkspace\Visualizer\Geometry;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\RamWorkspace\Visualizer\SutherlandHodgman;D:\RamWorkspace\Visualizer\SutherlandCohen;D:\RamWorkspace\Visualizer\HermiteCurve;D:\RamWorkspace\Visualizer\BezierCurve;D:\RamWorkspace\Visualizer\Geometry;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>D:\RamWorkspace\Visualizer\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Geometry.lib;Algorithms.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Geometry.lib;BezierCurve.lib;HermiteCurve.lib;SutherlandCohen.lib;SutherlandHodgman.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">

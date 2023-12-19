@@ -14,7 +14,7 @@ BezierCurve::~BezierCurve()
 std::vector<Point3D> BezierCurve::calculateBezier()
 {
     std::vector<Point3D> result;
-    for (double t = 0; t <= 1; t += 0.01) {
+    for (double t = 0; t <= 1; t += 0.001) {
         Point3D r = evaluateBezier(t);
         result.push_back(r);
     }

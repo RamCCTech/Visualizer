@@ -3,7 +3,7 @@
 #include "shape.h"
 #include "pch.h"
 
-class ALGORITHMS_API SutherlandCohen
+class SUTHERLANDCOHEN_API SutherlandCohen
 {
 public:
     SutherlandCohen(Shape region, Line l);
