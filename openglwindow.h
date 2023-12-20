@@ -28,6 +28,7 @@ public:
     void addClippingPolygon(Shape* s);
     void addHermiteCurve(std::vector<Point3D> points);
     void addBezierCurve(std::vector<Point3D> points);
+    void addBSplineCurve(std::vector<Point3D> points);
     void clipPolygons();
     void clipLines();
 

@@ -10,6 +10,7 @@
 #include "SutherlandHodgman.h"
 #include "HermiteCurve.h"
 #include "BezierCurve.h"
+#include "BSplineCurve.h"
 
 OpenGLWindow::OpenGLWindow(const QColor& background, QWidget* parent) :
     mBackground(background), mClippingPolygon({})
@@ -116,6 +117,18 @@ void OpenGLWindow::addBezierCurve(std::vector<Point3D> points)
         return;
     }
     addCurveLines(bezierPoints);
+    emit shapesUpdated();
+}
+
+void OpenGLWindow::addBSplineCurve(std::vector<Point3D> points)
+{
+    BSplineCurve bs(3);
+    std::vector<Point3D> bsplinePoints = bs.evaluate(points, 100);
+
+    if (bsplinePoints.size() < 2) {
+        return;
+    }
+    addCurveLines(bsplinePoints);
     emit shapesUpdated();
 }
 

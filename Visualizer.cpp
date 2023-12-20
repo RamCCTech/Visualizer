@@ -107,6 +107,8 @@ void Visualizer::setupUi()
     mHorizontalLayout9->addWidget(mPushButton8);
     mPushButton9 = new QPushButton("Hermite Curve", mGridLayoutWidget);
     mHorizontalLayout9->addWidget(mPushButton9);
+    mPushButton10 = new QPushButton("BSpline Curve", mGridLayoutWidget);
+    mHorizontalLayout9->addWidget(mPushButton10);
     mGridLayout->addLayout(mHorizontalLayout9, 5, 0, 1, 1);
 
     QLabel* label = new QLabel("Clipper", mGridLayoutWidget);
@@ -128,6 +130,7 @@ void Visualizer::connectSignalsSlots()
     connect(mPushButton7, &QPushButton::clicked, this, &Visualizer::clipPolygon);
     connect(mPushButton8, &QPushButton::clicked, this, &Visualizer::addBezier);
     connect(mPushButton9, &QPushButton::clicked, this, &Visualizer::addHermite);
+    connect(mPushButton10, &QPushButton::clicked, this, &Visualizer::addBSpline);
 }
 
 void Visualizer::addPoints()
@@ -217,6 +220,21 @@ void Visualizer::addBezier()
 
     // Add Bezier curve to the OpenGL window
     mOpenGLWidget->addBezierCurve(mPoints);
+
+    // Clear the list and points
+    clearListAndPoints();
+}
+
+void Visualizer::addBSpline()
+{
+    // Add a Bezier curve to the OpenGL window
+    if (mPoints.size() != 4) {
+        QMessageBox::warning(this, "Error", "Four points are needed to create a BSpline curve.");
+        return;
+    }
+
+    // Add Bezier curve to the OpenGL window
+    mOpenGLWidget->addBSplineCurve(mPoints);
 
     // Clear the list and points
     clearListAndPoints();

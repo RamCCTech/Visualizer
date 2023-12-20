@@ -35,6 +35,7 @@ private slots:
     void addLine();
     void addHermite();
     void addBezier();
+    void addBSpline();
     void addPolygon();
     void clipPolygon();
     void clipLine();
@@ -59,6 +60,7 @@ private:
     QPushButton* mPushButton7;
     QPushButton* mPushButton8;
     QPushButton* mPushButton9;
+    QPushButton* mPushButton10;
 
     // DoubleSpinBoxes
     QDoubleSpinBox* mDoubleSpinBox5;
