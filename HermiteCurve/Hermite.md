@@ -1,7 +1,3 @@
-Certainly! Here's a simple and short README for your HermiteCurve:
-
----
-
 # Hermite Curve
 
 The Hermite Curve is a mathematical spline that smoothly interpolates between a sequence of control points. This implementation provides a Hermite curve through the `HermiteCurve` class.
