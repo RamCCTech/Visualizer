@@ -96,42 +96,6 @@ void OpenGLWindow::addLines(std::vector<Line> lines)
     emit shapesUpdated();
 }
 
-void OpenGLWindow::addHermiteCurve(std::vector<Point3D> points)
-{
-    HermiteCurve bs(points);
-    std::vector<Point3D> hermitePoints = bs.calculateHermite();
-
-    if (hermitePoints.size() < 2) {
-        return;
-    }
-    addCurveLines(hermitePoints);
-    emit shapesUpdated();
-}
-
-void OpenGLWindow::addBezierCurve(std::vector<Point3D> points)
-{
-    BezierCurve bs(points);
-    std::vector<Point3D> bezierPoints = bs.calculateBezier();
-
-    if (bezierPoints.size() < 2) {
-        return;
-    }
-    addCurveLines(bezierPoints);
-    emit shapesUpdated();
-}
-
-void OpenGLWindow::addBSplineCurve(std::vector<Point3D> points)
-{
-    BSplineCurve bs(3);
-    std::vector<Point3D> bsplinePoints = bs.evaluate(points, 100);
-
-    if (bsplinePoints.size() < 2) {
-        return;
-    }
-    addCurveLines(bsplinePoints);
-    emit shapesUpdated();
-}
-
 void OpenGLWindow::initializeGL()
 {
     static const char* vertexShaderSource =
@@ -206,6 +170,7 @@ void OpenGLWindow::addCurveLines(const std::vector<Point3D>& points)
     for (int i = 0; i < points.size() - 1; i++) {
         mLines.push_back(Line(points[i], points[i + 1]));
     }
+    emit shapesUpdated();
 }
 
 void OpenGLWindow::drawVertices(const QVector<GLfloat>& vertices, const QVector<GLfloat>& colors)

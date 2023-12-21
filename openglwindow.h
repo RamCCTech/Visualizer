@@ -26,11 +26,9 @@ public:
     void addLines(std::vector<Line> lines);
     void addPolygons(Shape* s);
     void addClippingPolygon(Shape* s);
-    void addHermiteCurve(std::vector<Point3D> points);
-    void addBezierCurve(std::vector<Point3D> points);
-    void addBSplineCurve(std::vector<Point3D> points);
     void clipPolygons();
     void clipLines();
+    void addCurveLines(const std::vector<Point3D>& points);
 
 protected:
     void paintGL() override;
@@ -43,7 +41,6 @@ private:
     void addPolygonsVertices(QVector<GLfloat>& vertices, QVector<GLfloat>& colors);
     void addLinesVertices(QVector<GLfloat>& vertices, QVector<GLfloat>& colors);
     void addShapeVertices(Shape shape, QVector<GLfloat>& vertices, QVector<GLfloat>& colors, float red, float green, float blue);
-    void addCurveLines(const std::vector<Point3D>& points);
     void drawVertices(const QVector<GLfloat>& vertices, const QVector<GLfloat>& colors);
 
 private:

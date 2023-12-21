@@ -2,6 +2,9 @@
 #include "Visualizer.h"
 #include "OpenGLWindow.h"
 #include "Geometry.h"
+#include "HermiteCurve.h"
+#include "BSplineCurve.h"
+#include "BezierCurve.h"
 
 Visualizer::Visualizer(QWindow* parent) : QMainWindow(nullptr)
 {
@@ -202,9 +205,10 @@ void Visualizer::addHermite()
         QMessageBox::warning(this, "Error", "Four points are needed to create a Hermite curve.");
         return;
     }
-
+    HermiteCurve bs(mPoints);
+    std::vector<Point3D> hermitePoints = bs.calculateHermite();
     // Add Hermite curve to the OpenGL window
-    mOpenGLWidget->addHermiteCurve(mPoints);
+    mOpenGLWidget->addCurveLines(hermitePoints);
 
     // Clear the list and points
     clearListAndPoints();
@@ -217,9 +221,10 @@ void Visualizer::addBezier()
         QMessageBox::warning(this, "Error", "Four points are needed to create a Bezier curve.");
         return;
     }
-
+    BezierCurve bs(mPoints);
+    std::vector<Point3D> bezierPoints = bs.calculateBezier();
     // Add Bezier curve to the OpenGL window
-    mOpenGLWidget->addBezierCurve(mPoints);
+    mOpenGLWidget->addCurveLines(bezierPoints);
 
     // Clear the list and points
     clearListAndPoints();
@@ -232,9 +237,11 @@ void Visualizer::addBSpline()
         QMessageBox::warning(this, "Error", "Four points are needed to create a BSpline curve.");
         return;
     }
+    BSplineCurve bs(3);
+    std::vector<Point3D> bsplinePoints = bs.evaluate(mPoints, 100);
 
     // Add Bezier curve to the OpenGL window
-    mOpenGLWidget->addBSplineCurve(mPoints);
+    mOpenGLWidget->addCurveLines(bsplinePoints);
 
     // Clear the list and points
     clearListAndPoints();
