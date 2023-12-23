@@ -5,8 +5,10 @@
 #include "HermiteCurve.h"
 #include "BSplineCurve.h"
 #include "BezierCurve.h"
+#include "SutherlandCohen.h"
+#include "SutherlandHodgman.h"
 
-Visualizer::Visualizer(QWindow* parent) : QMainWindow(nullptr)
+Visualizer::Visualizer(QWindow* parent) : QMainWindow(nullptr), mClippingPolygon({})
 {
     setupUi();
     connectSignalsSlots();
@@ -17,13 +19,18 @@ Visualizer::~Visualizer()
 
 void Visualizer::setupUi()
 {
-    resize(861, 621);
+    resize(861, 650);
     mCentralWidget = new QWidget(this);
     mGridLayoutWidget = new QWidget(mCentralWidget);
-    mGridLayoutWidget->setGeometry(QRect(0, 0, 861, 621));
+    mGridLayoutWidget->setGeometry(QRect(0, 0, 861, 650));
     mGridLayout = new QGridLayout(mGridLayoutWidget);
     mGridLayout->setSpacing(6);
     mGridLayout->setContentsMargins(11, 11, 11, 11);
+
+
+    QLabel* label = new QLabel("Clipper", mGridLayoutWidget);
+    label->setAlignment(Qt::AlignLeading | Qt::AlignHCenter | Qt::AlignVCenter);
+    mGridLayout->addWidget(label, 0, 0, 1, 1);
 
     QSizePolicy sizePolicy2(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     sizePolicy2.setHorizontalStretch(0);
@@ -95,31 +102,56 @@ void Visualizer::setupUi()
     mHorizontalLayout7->addWidget(mPushButton3);
     mPushButton5 = new QPushButton("ADD Line", mGridLayoutWidget);
     mHorizontalLayout7->addWidget(mPushButton5);
-    mGridLayout->addLayout(mHorizontalLayout7, 3, 0, 1, 1);
-
 
     mHorizontalLayout8 = new QHBoxLayout();
     mPushButton6 = new QPushButton("Clip Lines", mGridLayoutWidget);
     mHorizontalLayout8->addWidget(mPushButton6);
     mPushButton7 = new QPushButton("Clip Polygons", mGridLayoutWidget);
     mHorizontalLayout8->addWidget(mPushButton7);
-    mGridLayout->addLayout(mHorizontalLayout8, 4, 0, 1, 1);
 
-    mHorizontalLayout9 = new QHBoxLayout();
     mPushButton8 = new QPushButton("Bezier Curve", mGridLayoutWidget);
-    mHorizontalLayout9->addWidget(mPushButton8);
     mPushButton9 = new QPushButton("Hermite Curve", mGridLayoutWidget);
-    mHorizontalLayout9->addWidget(mPushButton9);
     mPushButton10 = new QPushButton("BSpline Curve", mGridLayoutWidget);
-    mHorizontalLayout9->addWidget(mPushButton10);
-    mGridLayout->addLayout(mHorizontalLayout9, 5, 0, 1, 1);
 
-    QLabel* label = new QLabel("Clipper", mGridLayoutWidget);
-    label->setAlignment(Qt::AlignLeading | Qt::AlignHCenter | Qt::AlignVCenter);
-    mGridLayout->addWidget(label, 0, 0, 1, 1);
+
+    // Create a QTabWidget
+    tabWidget = new QTabWidget(mGridLayoutWidget);
+
+    // Create tabs for the different layouts
+    tabLayout1 = new QWidget(tabWidget);
+    tabLayout2 = new QWidget(tabWidget);
+    tabLayout3 = new QWidget(tabWidget);
+    tabLayout4 = new QWidget(tabWidget);
+
+    tabLayout1Vertical = new QVBoxLayout(tabLayout1);
+    tabLayout1Vertical->addLayout(mHorizontalLayout7);
+    tabLayout1Vertical->addLayout(mHorizontalLayout8);
+    tabLayout1->setLayout(tabLayout1Vertical);
+
+    tabLayout2Vertical = new QVBoxLayout(tabLayout2);
+    tabLayout2Vertical->addWidget(mPushButton8);
+    tabLayout2->setLayout(tabLayout2Vertical);
+
+    tabLayout3Vertical = new QVBoxLayout(tabLayout3);
+    tabLayout3Vertical->addWidget(mPushButton9);
+    tabLayout2->setLayout(tabLayout3Vertical);
+
+    tabLayout4Vertical = new QVBoxLayout(tabLayout4);
+    tabLayout4Vertical->addWidget(mPushButton10);
+    tabLayout2->setLayout(tabLayout4Vertical);
+
+    // Add tabs to the tab widget
+    tabWidget->addTab(tabLayout1, "Clip");
+    tabWidget->addTab(tabLayout2, "Bezier Curve");
+    tabWidget->addTab(tabLayout3, "Hermite Curve");
+    tabWidget->addTab(tabLayout4, "BSpline Curve");
+
+    // Add the tab widget to the main layout
+    mGridLayout->addWidget(tabWidget, 6, 0, 1, 1);
 
     setCentralWidget(mCentralWidget);
 }
+
 
 void Visualizer::connectSignalsSlots()
 {
@@ -129,8 +161,8 @@ void Visualizer::connectSignalsSlots()
     connect(mPushButton4, &QPushButton::clicked, this, &Visualizer::addRegion);
     connect(mPushButton3, &QPushButton::clicked, this, &Visualizer::addPolygon);
     connect(mPushButton5, &QPushButton::clicked, this, &Visualizer::addLine);
-    connect(mPushButton6, &QPushButton::clicked, this, &Visualizer::clipLine);
-    connect(mPushButton7, &QPushButton::clicked, this, &Visualizer::clipPolygon);
+    connect(mPushButton6, &QPushButton::clicked, this, &Visualizer::clipLines);
+    connect(mPushButton7, &QPushButton::clicked, this, &Visualizer::clipPolygons);
     connect(mPushButton8, &QPushButton::clicked, this, &Visualizer::addBezier);
     connect(mPushButton9, &QPushButton::clicked, this, &Visualizer::addHermite);
     connect(mPushButton10, &QPushButton::clicked, this, &Visualizer::addBSpline);
@@ -152,15 +184,13 @@ void Visualizer::addPoints()
 
 void Visualizer::addRegion()
 {
-    // Add a region to the OpenGL window
     if (mPoints.size() < 3) {
         QMessageBox::warning(this, "Error", "At least three points are needed to create a Region.");
         return;
     }
 
-    // Create a shape from the points and add it to the OpenGL window
     Shape* s = createShapeFromPoints();
-    mOpenGLWidget->addClippingPolygon(s);
+    addClippingPolygon(s);
 
     // Clear the list and points
     clearListAndPoints();
@@ -168,15 +198,13 @@ void Visualizer::addRegion()
 
 void Visualizer::addLine()
 {
-    // Add a line to the OpenGL window
     if (mPoints.size() < 2) {
         QMessageBox::warning(this, "Error", "At least two points are needed to create a line.");
         return;
     }
 
-    // Create lines from the points and add them to the OpenGL window
     std::vector<Line> lines = createLinesFromPoints();
-    mOpenGLWidget->addLines(lines);
+    addLines(lines);
 
     // Clear the list and points
     clearListAndPoints();
@@ -184,15 +212,13 @@ void Visualizer::addLine()
 
 void Visualizer::addPolygon()
 {
-    // Add a polygon to the OpenGL window
     if (mPoints.size() < 3) {
         QMessageBox::warning(this, "Error", "At least three points are needed to create a polygon.");
         return;
     }
 
-    // Create a shape from the points and add it to the OpenGL window
     Shape* polygon = createShapeFromPoints();
-    mOpenGLWidget->addPolygons(polygon);
+    addPolygons(polygon);
 
     // Clear the list and points
     clearListAndPoints();
@@ -200,15 +226,13 @@ void Visualizer::addPolygon()
 
 void Visualizer::addHermite()
 {
-    // Add a Hermite curve to the OpenGL window
     if (mPoints.size() != 4) {
         QMessageBox::warning(this, "Error", "Four points are needed to create a Hermite curve.");
         return;
     }
     HermiteCurve bs(mPoints);
     std::vector<Point3D> hermitePoints = bs.calculateHermite();
-    // Add Hermite curve to the OpenGL window
-    mOpenGLWidget->addCurveLines(hermitePoints);
+    addCurveLines(hermitePoints);
 
     // Clear the list and points
     clearListAndPoints();
@@ -216,15 +240,13 @@ void Visualizer::addHermite()
 
 void Visualizer::addBezier()
 {
-    // Add a Bezier curve to the OpenGL window
     if (mPoints.size() != 4) {
         QMessageBox::warning(this, "Error", "Four points are needed to create a Bezier curve.");
         return;
     }
     BezierCurve bs(mPoints);
     std::vector<Point3D> bezierPoints = bs.calculateBezier();
-    // Add Bezier curve to the OpenGL window
-    mOpenGLWidget->addCurveLines(bezierPoints);
+    addCurveLines(bezierPoints);
 
     // Clear the list and points
     clearListAndPoints();
@@ -232,7 +254,6 @@ void Visualizer::addBezier()
 
 void Visualizer::addBSpline()
 {
-    // Add a Bezier curve to the OpenGL window
     if (mPoints.size() != 4) {
         QMessageBox::warning(this, "Error", "Four points are needed to create a BSpline curve.");
         return;
@@ -240,23 +261,10 @@ void Visualizer::addBSpline()
     BSplineCurve bs(3);
     std::vector<Point3D> bsplinePoints = bs.evaluate(mPoints, 100);
 
-    // Add Bezier curve to the OpenGL window
-    mOpenGLWidget->addCurveLines(bsplinePoints);
+    addCurveLines(bsplinePoints);
 
     // Clear the list and points
     clearListAndPoints();
-}
-
-void Visualizer::clipPolygon()
-{
-    // Clip polygons in the OpenGL window
-    mOpenGLWidget->clipPolygons();
-}
-
-void Visualizer::clipLine()
-{
-    // Clip lines in the OpenGL window
-    mOpenGLWidget->clipLines();
 }
 
 Shape* Visualizer::createShapeFromPoints()
@@ -285,7 +293,80 @@ std::vector<Line> Visualizer::createLinesFromPoints()
 
 void Visualizer::clearListAndPoints()
 {
-    // Clear the list and points
     mListWidget3->clear();
     mPoints.clear();
+}
+
+void Visualizer::addPolygonsVertices(float red, float green, float blue)
+{
+    for (int i = 0; i < mPolygons.size(); i++) {
+        addShapeVertices(mPolygons.at(i), red, green, blue);
+    }
+}
+
+void Visualizer::addShapeVertices(Shape shape, float red, float green, float blue)
+{
+    std::vector<Line> lines = shape.getShape();
+    for (int j = 0; j < lines.size(); j++) {
+        vertices << lines.at(j).p1().x() << lines.at(j).p1().y();
+        vertices << lines.at(j).p2().x() << lines.at(j).p2().y();
+        colors << red << green << blue;
+        colors << red << green << blue;
+    }
+}
+
+void Visualizer::addCurveLines(const std::vector<Point3D>& points)
+{
+    for (int i = 0; i < points.size() - 1; i++) {
+        mLines.push_back(Line(points[i], points[i + 1]));
+    }
+    addShapeVertices(mLines, 0.0f, 1.0f, 1.0f);
+    mOpenGLWidget->updateShape(vertices, colors);
+
+}
+
+void Visualizer::clipPolygons()
+{
+    for (int i = 0; i < mPolygons.size(); i++) {
+        SutherlandHodgman sh(mClippingPolygon, mPolygons.at(i));
+        mPolygons.at(i) = sh.getClippedPolygon();
+    }
+    addPolygonsVertices(0.0f, 0.0f, 1.0f);
+    mOpenGLWidget->updateShape(vertices, colors);
+
+}
+
+void Visualizer::clipLines()
+{
+    for (int i = 0; i < mLines.size(); i++) {
+        SutherlandCohen sc(mClippingPolygon, mLines[i]);
+        mLines[i] = sc.getClippedLine();
+    }
+    addShapeVertices(mLines, 0.0f, 0.0f, 1.0f);
+    mOpenGLWidget->updateShape(vertices, colors);
+
+}
+
+void Visualizer::addClippingPolygon(Shape* s)
+{
+    mClippingPolygon = *s;
+    addShapeVertices(mClippingPolygon, 1.0f, 1.0f, 0.0f);
+    mOpenGLWidget->updateShape(vertices, colors);
+
+}
+
+void Visualizer::addPolygons(Shape* s)
+{
+    mPolygons.push_back(*s);
+    addPolygonsVertices(1.0f, 1.0f, 1.0f);
+    mOpenGLWidget->updateShape(vertices, colors);
+
+}
+
+void Visualizer::addLines(std::vector<Line> lines)
+{
+    for (Line l : lines)
+        mLines.push_back(l);
+    addShapeVertices(mLines, 0.0f, 1.0f, 1.0f);
+    mOpenGLWidget->updateShape(vertices, colors);
 }
