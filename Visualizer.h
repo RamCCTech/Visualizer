@@ -21,6 +21,10 @@ class Visualizer : public QMainWindow, protected QOpenGLFunctions
 public:
     Visualizer(QWindow* parent = nullptr);
     ~Visualizer();
+    void addLines(std::vector<Line> lines);
+    void addPolygons(Shape* s);
+    void addClippingPolygon(Shape* s);
+    void addCurveLines(const std::vector<Point3D>& points);
 
 private:
     void setupUi();
@@ -28,6 +32,8 @@ private:
     Shape* createShapeFromPoints();
     std::vector<Line> createLinesFromPoints();
     void clearListAndPoints();
+    void addShapeVertices(Shape shape, float red, float green, float blue);
+    void addPolygonsVertices(float red, float green, float blue);
 
 private slots:
     void addPoints();
@@ -37,8 +43,8 @@ private slots:
     void addBezier();
     void addBSpline();
     void addPolygon();
-    void clipPolygon();
-    void clipLine();
+    void clipPolygons();
+    void clipLines();
 
 private:
     QWidget* mCentralWidget;
@@ -46,11 +52,9 @@ private:
     QGridLayout* mGridLayout;
     QHBoxLayout* mHorizontalLayout7;
     QHBoxLayout* mHorizontalLayout8;
-    QHBoxLayout* mHorizontalLayout9;
-    QHBoxLayout* mHorizontalLayout10;
-    QVBoxLayout* mVerticalLayout3;
     QVBoxLayout* mVerticalLayout5;
     QHBoxLayout* mHorizontalLayout5;
+    QHBoxLayout* mHorizontalLayout10;
 
     // Buttons
     QPushButton* mPushButton4;
@@ -71,7 +75,23 @@ private:
     QListWidget* mListWidget3;
     OpenGLWindow* mOpenGLWidget;
 
+    QTabWidget* tabWidget;
+
+    QWidget* tabLayout1;
+    QWidget* tabLayout2;
+    QWidget* tabLayout3;
+    QWidget* tabLayout4;
+
+    QVBoxLayout* tabLayout1Vertical;
+    QVBoxLayout* tabLayout2Vertical;
+    QVBoxLayout* tabLayout3Vertical;
+    QVBoxLayout* tabLayout4Vertical;
+
     // Data
     std::vector<Point3D> mPoints;
+    Shape mClippingPolygon;
+    std::vector<Shape> mPolygons;
+    std::vector<Line> mLines;
+    QVector<GLfloat> vertices;
+    QVector<GLfloat> colors;
 };
-
