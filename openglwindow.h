@@ -22,13 +22,8 @@ signals:
 public:
     OpenGLWindow(const QColor& background, QWidget* parent);
     ~OpenGLWindow();
-
-    void addLines(std::vector<Line> lines);
-    void addPolygons(Shape* s);
-    void addClippingPolygon(Shape* s);
-    void clipPolygons();
-    void clipLines();
-    void addCurveLines(const std::vector<Point3D>& points);
+    void updateShape(QVector<GLfloat>& vertices, QVector<GLfloat>& colors);
+    void mouseMoveEvent(QMouseEvent* event);
 
 protected:
     void paintGL() override;
@@ -37,11 +32,8 @@ protected:
 private:
     void reset();
     void setupMatrix();
-    void addClippingPolygonVertices(QVector<GLfloat>& vertices, QVector<GLfloat>& colors);
-    void addPolygonsVertices(QVector<GLfloat>& vertices, QVector<GLfloat>& colors);
-    void addLinesVertices(QVector<GLfloat>& vertices, QVector<GLfloat>& colors);
-    void addShapeVertices(Shape shape, QVector<GLfloat>& vertices, QVector<GLfloat>& colors, float red, float green, float blue);
     void drawVertices(const QVector<GLfloat>& vertices, const QVector<GLfloat>& colors);
+
 
 private:
     bool mAnimating = false;
@@ -57,9 +49,10 @@ private:
     GLint m_colAttr = 0;
     GLint m_matrixUniform = 0;
     QColor mBackground;
+    QQuaternion rotationAngle;
+    QPoint lastPos;
     QMetaObject::Connection mContextWatchConnection;
 
-    Shape mClippingPolygon;
-    std::vector<Shape> mPolygons;
-    std::vector<Line> mLines;
+    QVector<GLfloat> mVertices;
+    QVector<GLfloat> mColors;
 };
